@@ -1,26 +1,27 @@
-# serializers.py
 from rest_framework import serializers
 
-from .models import NewsModel, NoticeModel, ImagesModel, BaseModel
+from .models import NewsModel, NoticeModel, ImagesModel, MemberModel
 
 
-class BaseModelSerializer(serializers.ModelSerializer):
+class ImagesModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BaseModel
-        fields = ['context', 'created_at', 'updated_at']
-
-
-class NewsModelSerializer(BaseModelSerializer):
-    class Meta(BaseModelSerializer.Meta):
-        model = NewsModel
-
-
-class NoticeModelSerializer(BaseModelSerializer):
-    class Meta(BaseModelSerializer.Meta):
-        model = NoticeModel
-
-
-class ImagesModelSerializer(BaseModelSerializer):
-    class Meta(BaseModelSerializer.Meta):
         model = ImagesModel
-        fields = ['context', 'created_at', 'updated_at', 'image', 'notice', 'news']
+        fields = '__all__'
+
+
+class NewsModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsModel
+        fields = '__all__'
+
+
+class NoticeModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NoticeModel
+        fields = '__all__'
+
+
+class MemberModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemberModel
+        fields = '__all__'

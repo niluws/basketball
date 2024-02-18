@@ -2,7 +2,8 @@ from django.db import models
 
 
 class BaseModel(models.Model):
-    context = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
+    context = models.CharField(max_length=1000, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -11,19 +12,19 @@ class BaseModel(models.Model):
 
 
 class NewsModel(BaseModel):
-    def __str__(self):
-        return f"News: {self.context[:50]}..."
+    title = models.CharField(max_length=500, null=True, blank=True)
+    pass
 
 
 class NoticeModel(BaseModel):
-    def __str__(self):
-        return f"Notice: {self.context[:50]}..."
+    title = models.CharField(max_length=500, null=True, blank=True)
+    pass
 
 
 class ImagesModel(BaseModel):
-    image = models.ImageField(upload_to='images/')
-    notice = models.ForeignKey(NoticeModel, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
-    news = models.ForeignKey(NewsModel, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
+    pass
 
-    def __str__(self):
-        return f"Image: {self.context[:50]}..."
+
+class MemberModel(BaseModel):
+    full_name = models.CharField(max_length=225)
+    pass
