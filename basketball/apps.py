@@ -4,3 +4,4 @@ from django.apps import AppConfig
 class BasketballConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "basketball"
+    verbose_name = "مدیریت صفحات هات عمومی"
