@@ -1,12 +1,17 @@
 from rest_framework.routers import DefaultRouter
 
-from .views import NewsModelViewSet, NoticeModelViewSet, ImagesModelViewSet, MemberModelViewSet
+from .views import NewsModelViewSet, ClassModelViewSet, ImageModelViewSet, MemberModelViewSet, BlogModelViewSet, \
+    AboutModelViewSet, LeagueModelViewSet, LeagueTableViewSet
 
 app_name = 'basketball'
 router = DefaultRouter()
 router.register(r'news', NewsModelViewSet, basename='news')
-router.register(r'notices', NoticeModelViewSet, basename='notices')
-router.register(r'images', ImagesModelViewSet, basename='images')
-router.register(r'members', MemberModelViewSet, basename='members')
+router.register(r'class', ClassModelViewSet, basename='class')
+router.register(r'blog', BlogModelViewSet, basename='blog')
+router.register(r'image', ImageModelViewSet, basename='image')
+router.register(r'member', MemberModelViewSet, basename='member')
+router.register(r'about', AboutModelViewSet, basename='about')
+router.register(r'league', LeagueModelViewSet, basename='league')
+router.register(r'league_table', LeagueTableViewSet, basename='league_table')
 
 urlpatterns = router.urls
