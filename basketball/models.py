@@ -14,7 +14,6 @@ class NewsModel(models.Model):
 
 
 class ClassModel(models.Model):
-    show = models.BooleanField(verbose_name="در خانه نمایش داده شود", null=True, blank=True)
     class_name = models.CharField(max_length=225, null=True, blank=True, verbose_name="نام کلاس")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -33,6 +32,7 @@ class ClassDetailModel(models.Model):
         ("M", "اقایان"),
         ("F", "بانوان"),
     )
+    show = models.BooleanField(verbose_name="در خانه نمایش داده شود", null=True, blank=True)
     class_type = models.ForeignKey(ClassModel, on_delete=models.CASCADE,related_name="class_type", null=True, blank=True)
     title = models.CharField(max_length=225, null=True, blank=True, verbose_name="شاخه ی دوره")
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, null=True, blank=True, verbose_name="وضعیت")

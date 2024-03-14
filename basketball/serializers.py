@@ -21,7 +21,7 @@ class ClassModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClassModel
-        fields = ['show', 'class_name', 'class_type']
+        fields = ['class_name', 'class_type']
 
 
 class BlogModelSerializer(serializers.ModelSerializer):
