@@ -14,6 +14,7 @@ class NewsModel(models.Model):
 
 
 class ClassModel(models.Model):
+    show = models.BooleanField(verbose_name="در خانه نمایش داده شود", null=True, blank=True)
     class_name = models.CharField(max_length=225, null=True, blank=True, verbose_name="نام کلاس")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -32,7 +33,7 @@ class ClassDetailModel(models.Model):
         ("M", "اقایان"),
         ("F", "بانوان"),
     )
-    class_type = models.ForeignKey(ClassModel, on_delete=models.CASCADE, null=True, blank=True)
+    class_type = models.ForeignKey(ClassModel, on_delete=models.CASCADE,related_name="class_type", null=True, blank=True)
     title = models.CharField(max_length=225, null=True, blank=True, verbose_name="شاخه ی دوره")
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, null=True, blank=True, verbose_name="وضعیت")
     deadline = models.DateField(null=True, blank=True, verbose_name="مهلت")
@@ -71,20 +72,15 @@ class ImagesModel(models.Model):
         verbose_name = "عکس"
 
 
-class StaffMemberModel(models.Model):
-    GENDER_CHOICES = (
-        ("M", "اقا"),
-        ("F", "خانم"),
-    )
+class StaffModel(models.Model):
     image = models.ImageField(upload_to='staff/', null=True, blank=True, verbose_name="عکس")
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True, verbose_name="جنسیت")
     full_name = models.CharField(max_length=225, null=True, blank=True, verbose_name="نام و نام خانوادگی")
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
-        verbose_name_plural = "اعضا"
-        verbose_name = "اعضا"
+        verbose_name_plural = "اعضای اصلی"
+        verbose_name = "اعضای اصلی"
 
 
 class BossModel(models.Model):
@@ -98,9 +94,15 @@ class BossModel(models.Model):
         verbose_name = "رییس"
 
 
-class CommitteeMemberModel(models.Model):
+class CommitteeModel(models.Model):
+    # todo not completed
+    GENDER_CHOICES = (
+        ("M", "اقا"),
+        ("F", "خانم"),
+    )
     image = models.ImageField(upload_to='committee/', null=True, blank=True, verbose_name="عکس")
     full_name = models.CharField(max_length=225, null=True, blank=True, verbose_name="نام و نام خانوادگی")
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True, verbose_name="جنسیت")
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -108,14 +110,29 @@ class CommitteeMemberModel(models.Model):
         verbose_name_plural = "اعضای کمیته"
 
 
-class AboutModel(ImagesModel):
+class AboutModel(models.Model):
+    description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
+
     class Meta:
         verbose_name_plural = "درباره ی ما"
         verbose_name = "درباره ی ما"
 
 
+# todo it should be in settings
+class AboutImagesModel(models.Model):
+    about = models.ForeignKey(AboutModel, on_delete=models.CASCADE, verbose_name="درباره ی ما")
+    image = models.ImageField(upload_to='about/', null=True, blank=True, verbose_name="عکس")
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "عکس های درباره ی ما"
+        verbose_name = "عکس درباره ی ما"
+
+
 class LeagueModel(models.Model):
     league_name = models.CharField(max_length=225, null=True, blank=True, verbose_name="نام لیگ")
+
     # available = models.BooleanField(null=True, blank=True, verbose_name="")
 
     class Meta:
