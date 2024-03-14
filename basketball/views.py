@@ -1,102 +1,72 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 
-from .models import NewsModel, ClassModel, ImagesModel, StaffMemberModel, BlogModel, LeagueTableModel, LeagueModel, \
-    AboutModel
-from .serializers import NewsModelSerializer, ClassModelSerializer, ImageModelSerializer, StaffMemberModelSerializer, \
-    BlogModelSerializer, AboutModelSerializer, LeagueModelSerializer, LeagueTableSerializer
+from .models import NewsModel, ClassModel, ImagesModel, StaffModel, BlogModel, LeagueTableModel, LeagueModel, \
+    AboutModel, BossModel, CommitteeModel
+from .serializers import NewsModelSerializer, ClassModelSerializer, ImageModelSerializer, StaffModelSerializer, \
+    BlogModelSerializer, AboutModelSerializer, LeagueModelSerializer, LeagueTableSerializer, BossModelSerializer, \
+    CommitteeModelSerializer
 
 
 class NewsModelViewSet(viewsets.ModelViewSet):
     queryset = NewsModel.objects.all()
     serializer_class = NewsModelSerializer
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            permission_classes = [permissions.AllowAny]
-        else:
-            permission_classes = [permissions.IsAdminUser]
-        return [permission() for permission in permission_classes]
+    http_method_names = ['get']
 
 
 class ClassModelViewSet(viewsets.ModelViewSet):
     queryset = ClassModel.objects.all()
     serializer_class = ClassModelSerializer
+    http_method_names = ['get']
 
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            permission_classes = [permissions.AllowAny]
-        else:
-            permission_classes = [permissions.IsAdminUser]
-        return [permission() for permission in permission_classes]
 
 
 class BlogModelViewSet(viewsets.ModelViewSet):
     queryset = BlogModel.objects.all()
     serializer_class = BlogModelSerializer
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            permission_classes = [permissions.AllowAny]
-        else:
-            permission_classes = [permissions.IsAdminUser]
-        return [permission() for permission in permission_classes]
+    http_method_names = ['get']
 
 
 class ImageModelViewSet(viewsets.ModelViewSet):
     queryset = ImagesModel.objects.all()
     serializer_class = ImageModelSerializer
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            permission_classes = [permissions.AllowAny]
-        else:
-            permission_classes = [permissions.IsAdminUser]
-        return [permission() for permission in permission_classes]
+    http_method_names = ['get']
 
 
-class MemberModelViewSet(viewsets.ModelViewSet):
-    queryset = StaffMemberModel.objects.all()
-    serializer_class = StaffMemberModelSerializer
+# todo all members order by alphabet
+# todo Committee shows by genders{roll{gender{name and image--mabe change the table
+class StaffModelViewSet(viewsets.ModelViewSet):
+    queryset = StaffModel.objects.all()
+    serializer_class = StaffModelSerializer
+    http_method_names = ['get']
 
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            permission_classes = [permissions.AllowAny]
-        else:
-            permission_classes = [permissions.IsAdminUser]
-        return [permission() for permission in permission_classes]
+
+class BossModelViewSet(viewsets.ModelViewSet):
+    queryset = BossModel.objects.all()
+    serializer_class = BossModelSerializer
+    http_method_names = ['get']
+
+
+class CommitteeModelViewSet(viewsets.ModelViewSet):
+    queryset = CommitteeModel.objects.all()
+    serializer_class = CommitteeModelSerializer
+    http_method_names = ['get']
 
 
 class AboutModelViewSet(viewsets.ModelViewSet):
     queryset = AboutModel.objects.all()
     serializer_class = AboutModelSerializer
+    http_method_names = ['get']
 
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            permission_classes = [permissions.AllowAny]
-        else:
-            permission_classes = [permissions.IsAdminUser]
-        return [permission() for permission in permission_classes]
+    # todo get just the last about
 
 
 class LeagueModelViewSet(viewsets.ModelViewSet):
     queryset = LeagueModel.objects.all()
     serializer_class = LeagueModelSerializer
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            permission_classes = [permissions.AllowAny]
-        else:
-            permission_classes = [permissions.IsAdminUser]
-        return [permission() for permission in permission_classes]
+    http_method_names = ['get']
 
 
 class LeagueTableViewSet(viewsets.ModelViewSet):
     queryset = LeagueTableModel.objects.all()
     serializer_class = LeagueTableSerializer
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            permission_classes = [permissions.AllowAny]
-        else:
-            permission_classes = [permissions.IsAdminUser]
-        return [permission() for permission in permission_classes]
+    http_method_names = ['get']
