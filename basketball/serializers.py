@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import NewsModel, ClassModel, ImagesModel, StaffMemberModel, BlogModel, AboutModel, LeagueModel
+from .models import NewsModel, ClassModel, ImagesModel, StaffModel, BlogModel, AboutModel, LeagueModel, BossModel, \
+    CommitteeModel, ClassDetailModel
 
 
 class NewsModelSerializer(serializers.ModelSerializer):
@@ -9,10 +10,18 @@ class NewsModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ClassDetailModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClassDetailModel
+        fields = '__all__'
+
+
 class ClassModelSerializer(serializers.ModelSerializer):
+    class_type = ClassDetailModelSerializer(many=True, read_only=True)
+
     class Meta:
         model = ClassModel
-        fields = '__all__'
+        fields = ['show', 'class_name', 'class_type']
 
 
 class BlogModelSerializer(serializers.ModelSerializer):
@@ -27,9 +36,21 @@ class ImageModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class StaffMemberModelSerializer(serializers.ModelSerializer):
+class StaffModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StaffMemberModel
+        model = StaffModel
+        fields = '__all__'
+
+
+class BossModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BossModel
+        fields = '__all__'
+
+
+class CommitteeModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommitteeModel
         fields = '__all__'
 
 
