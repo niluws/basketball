@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import NewsModel, ClassModel, ImagesModel, StaffModel, BlogModel, AboutModel, LeagueModel, BossModel, \
-    CommitteeModel, ClassDetailModel, ImageCategoryModel
+    CommitteeModel, ClassDetailModel, ImageCategoryModel, AboutImagesModel
 
 
 class NewsModelSerializer(serializers.ModelSerializer):
@@ -62,10 +62,18 @@ class CommitteeModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AboutImageModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AboutImagesModel
+        fields = '__all__'
+
+
 class AboutModelSerializer(serializers.ModelSerializer):
+    image = AboutImageModelSerializer(many=True, read_only=True)
+
     class Meta:
         model = AboutModel
-        fields = '__all__'
+        fields = ['description', 'image']
 
 
 class LeagueModelSerializer(serializers.ModelSerializer):

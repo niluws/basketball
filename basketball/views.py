@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.response import Response
 
 from .models import NewsModel, ClassModel, ImageCategoryModel, StaffModel, BlogModel, LeagueTableModel, LeagueModel, \
     AboutModel, BossModel, CommitteeModel, ClassDetailModel
@@ -52,7 +53,14 @@ class AboutModelListAPI(generics.ListAPIView):
     queryset = AboutModel.objects.all()
     serializer_class = AboutModelSerializer
 
-    # todo get just the last about
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset.exists():
+            return Response({"error": "No data found"}, status=404)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class LeagueModelListAPI(generics.ListAPIView):

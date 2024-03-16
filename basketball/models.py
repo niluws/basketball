@@ -154,7 +154,7 @@ class AboutModel(models.Model):
     description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
 
     def __str__(self):
-        return self.description
+        return 'درباره ی ما'
 
     class Meta:
         verbose_name_plural = "درباره ی ما"

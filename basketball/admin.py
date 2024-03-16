@@ -7,10 +7,11 @@ from .models import NewsModel, ClassModel, BlogModel, ImagesModel, StaffModel, A
 
 @admin.register(NewsModel)
 class NewsModelAdmin(admin.ModelAdmin):
-    list_display = ('image', 'title', 'description', 'created_at', 'updated_at')
+    list_display = ('image', 'title', 'short_description', 'created_at', 'updated_at')
     ordering = ('-created_at',)
     sortable_by = ('created_at',)
-
+    def short_description(self, obj):
+        return ' '.join(obj.description.split()[:15]) + '...'
 
 class ClassDetailModelInline(admin.TabularInline):
     model = ClassDetailModel
@@ -25,15 +26,17 @@ class ClassModelAdmin(admin.ModelAdmin):
 
 @admin.register(BlogModel)
 class BlogModelAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description')
-
+    list_display = ('title', 'short_description')
+    def short_description(self, obj):
+        return ' '.join(obj.description.split()[:15]) + '...'
 
 class ImageModelInline(admin.TabularInline):
     model = ImagesModel
     extra = 0
-    fields = ('image_tag', 'image', 'description')
+    fields = ('image_tag', 'image', 'short_description')
     readonly_fields = ('image_tag',)
-
+    def short_description(self, obj):
+        return ' '.join(obj.description.split()[:15]) + '...'
     def image_tag(self, obj):
         if obj.image:
             return format_html('<img src="{}" style="max-width:100px; max-height:100px"/>', obj.image.url)
@@ -109,8 +112,10 @@ class AboutImagesModelInline(admin.TabularInline):
 class AboutModelAdmin(admin.ModelAdmin):
     inlines = (AboutImagesModelInline,)
     MAX_OBJECTS = 1
-    list_display = ('description', 'display_images')
+    list_display = ('short_description', 'display_images')
 
+    def short_description(self, obj):
+        return ' '.join(obj.description.split()[:15]) + '...'
     def display_images(self, obj):
         images = obj.image.all()
         if images:
