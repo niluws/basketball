@@ -1,8 +1,8 @@
 from rest_framework import generics
 
-from .models import NewsModel, ClassModel, ImagesModel, StaffModel, BlogModel, LeagueTableModel, LeagueModel, \
+from .models import NewsModel, ClassModel, ImageCategoryModel, StaffModel, BlogModel, LeagueTableModel, LeagueModel, \
     AboutModel, BossModel, CommitteeModel, ClassDetailModel
-from .serializers import NewsModelSerializer, ClassModelSerializer, ImageModelSerializer, StaffModelSerializer, \
+from .serializers import NewsModelSerializer, ClassModelSerializer, ImageCategoryModelSerializer, StaffModelSerializer, \
     BlogModelSerializer, AboutModelSerializer, LeagueModelSerializer, LeagueTableSerializer, BossModelSerializer, \
     CommitteeModelSerializer, ClassDetailModelSerializer
 
@@ -27,9 +27,9 @@ class BlogModelListAPI(generics.ListAPIView):
     serializer_class = BlogModelSerializer
 
 
-class ImageModelListAPI(generics.ListAPIView):
-    queryset = ImagesModel.objects.all()
-    serializer_class = ImageModelSerializer
+class ImageListAPIView(generics.ListAPIView):
+    queryset = ImageCategoryModel.objects.all()
+    serializer_class = ImageCategoryModelSerializer
 
 
 # todo Committee shows by genders{roll{gender{name and image--mabe change the table
