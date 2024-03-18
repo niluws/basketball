@@ -37,6 +37,12 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    ROLL_CHOICES = (
+        ("V", "ورزشکار"),
+        ("M", "مربی"),
+        ("S", "سرپرست"),
+        ("D", "داور"),
+    )
     first_name = models.CharField(max_length=150, verbose_name='نام')
     last_name = models.CharField(max_length=150, verbose_name='نام خانوادگی')
     phone_number = models.CharField(_('phone number'), max_length=11, unique=True, validators=[
@@ -47,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    roll = models.CharField(max_length=1, choices=ROLL_CHOICES, verbose_name="سمت")
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'phone_number'

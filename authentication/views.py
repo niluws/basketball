@@ -4,7 +4,6 @@ import redis
 from django.contrib.auth import authenticate
 from django.core.mail import EmailMessage
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from utils import config, handler
@@ -30,6 +29,10 @@ def generate_and_send_otp(email, current_site):
 
 
 class RegisterAPIView(generics.CreateAPIView):
+    """
+    roll have 4 types v,s,m,d
+    short form of ورزشکار , سرپرست , مربی و داور
+    """
     serializer_class = RegisterSerializer
 
     @exception_handler
@@ -56,6 +59,7 @@ class RegisterAPIView(generics.CreateAPIView):
                 'first_name': serializer.validated_data.get('first_name'),
                 'last_name': serializer.validated_data.get('last_name'),
                 'phone_number': phone_number,
+                'roll': serializer.validated_data.get('roll'),
             }
             log = {
                 'event': 'Registered',
@@ -103,7 +107,7 @@ class LoginAPIView(generics.CreateAPIView):
 
 
 class LogoutAPIView(generics.GenericAPIView):
-
+    serializer_class = LogoutSerializer
     @exception_handler
     def post(self, request):
         if request.user.is_authenticated:
