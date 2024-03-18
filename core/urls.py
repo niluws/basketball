@@ -24,6 +24,7 @@ urlpatterns = [
 
     path("admin/", admin.site.urls),
     path("auth/", include('authentication.urls', namespace='auth')),
+    path("profile/", include('account.urls', namespace='profile')),
     path("basketball/", include('basketball.urls', namespace='basketball')),
 ]
 if settings.DEBUG:

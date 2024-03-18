@@ -1,17 +1,16 @@
 import uuid
 
 import redis
-from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth import authenticate
 from django.core.mail import EmailMessage
-from rest_framework import generics, views
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from utils import config, handler
+from .models import User
+from .serializers import RegisterSerializer, LoginSerializer,LogoutSerializer
 
-from utils import config, JWTManager, handler
-from .models import User, LogUserModel
-from .serializers import RegisterSerializer, LoginSerializer, RefreshTokenSerializer, LogoutSerializer, MeSerializer, \
-    VerifyEmailSerializer, LogSerializer
-
-jwt_manager = JWTManager.AuthHandler()
 exception_handler = handler.exception_handler
 log_user_activity = handler.log_user_activity
 
@@ -36,16 +35,15 @@ class RegisterAPIView(generics.CreateAPIView):
     @exception_handler
     def post(self, request, *args, **kwargs):
         try:
-
             serializer = self.get_serializer(data=request.data)
-            email = request.data.get('email')
+            phone_number = request.data.get('phone_number')
             password = request.data.get('password')
             confirm_password = request.data.get('confirm_password')
-            user = User.objects.filter(email=email).first()
+            user = User.objects.filter(phone_number=phone_number).first()
 
             if user:
                 return Response({'success': False, 'status': 400,
-                                 'error': 'Email already exists. Please choose a different email address'})
+                                 'error': 'Phone number already exists'})
             elif password != confirm_password:
                 return Response({'success': False, 'status': 400, 'error': 'Password fields are not match'})
             serializer.is_valid(raise_exception=True)
@@ -57,7 +55,7 @@ class RegisterAPIView(generics.CreateAPIView):
                 'message': 'You registered successfully',
                 'first_name': serializer.validated_data.get('first_name'),
                 'last_name': serializer.validated_data.get('last_name'),
-                'email': email,
+                'phone_number': phone_number,
             }
             log = {
                 'event': 'Registered',
@@ -73,137 +71,96 @@ class LoginAPIView(generics.CreateAPIView):
 
     @exception_handler
     def create(self, request, *args, **kwargs):
-        email = request.data.get('email')
+        phone_number = request.data.get('phone_number')
         password = request.data.get('password')
-        user = User.objects.filter(email=email).first()
+        user = User.objects.filter(phone_number=phone_number).first()
 
-        if not email or not password:
-            return Response({'success': False, 'status': 400, 'error': 'Email and password are required'})
+        if not phone_number or not password:
+            return Response({'success': False, 'status': 400, 'error': 'Phone number and password are required'})
 
         if user:
             if user.is_active:
                 if not user.check_password(password):
                     return Response({'success': False, 'status': 401, 'error': 'Incorrect password'})
-                login_token = jwt_manager.encode_login_token(user.email)
-
+                user = authenticate(phone_number=phone_number, password=password)
+                refresh = RefreshToken.for_user(user)
                 message = {
                     'message': 'You logged in successfully',
-                    'data': login_token,
+                    'data': {
+                        'access': str(refresh.access_token),
+                        'refresh': str(refresh)
+                    },
                 }
                 log = {
                     'event': 'Logged in',
                     'user_id': user.pk,
                 }
-                return Response({'success': True, 'status': 200, 'message': message,'log': log})
+                return Response({'success': True, 'status': 200, 'message': message, 'log': log})
             else:
                 return Response({'success': False, 'status': 401, 'error': 'Verify your account'})
         else:
-            return Response({'success': False, 'status': 401, 'error': 'Email not found.'})
+            return Response({'success': False, 'status': 401, 'error': 'Phone number not found.'})
 
 
 class LogoutAPIView(generics.GenericAPIView):
-    serializer_class = LogoutSerializer
 
     @exception_handler
-    def get(self, request):
-        auth = jwt_manager.get_user_from_auth_header(self.request)
-        user = User.objects.get(email=auth)
-        if auth:
+    def post(self, request):
+        if request.user.is_authenticated:
             message = {
                 'message': 'You Logout successfully',
             }
             log = {
                 'event': 'Logout',
-                'user_id': user.pk,
+                'user_id': request.user.pk,
             }
             return Response({'success': True, 'status': 200, 'message': message, 'log': log})
         else:
             return Response({'success': False, 'status': 401, 'error': 'User is not authenticated'})
 
 
-class MeAPIView(generics.RetrieveUpdateAPIView):
-    serializer_class = MeSerializer
 
-    def get_object(self):
-        user = jwt_manager.get_user_from_auth_header(self.request)
+# class ActiveAccountAPIView(views.APIView):
+#
+#     @exception_handler
+#     def get(self, request, otp_code):
+#
+#         r = redis.Redis(host='localhost', port=6379, db=0)
+#         keys = r.keys('*')
+#
+#         for key in keys:
+#
+#             value = r.get(key)
+#
+#             if value.decode('utf-8') == otp_code:
+#                 user = User.objects.filter(email=key.decode('utf-8')).first()
+#                 user.is_active = True
+#                 user.save()
+#                 r.delete(key)
+#
+#                 return Response({'success': True, 'status': 200, 'message': 'Account activated successfully'})
+#
+#         return Response({'success': False, 'status': 404, 'error': 'Invalid OTP code'})
+#
+#
+# class VerifyEmailAPIView(generics.CreateAPIView):
+#     serializer_class = VerifyEmailSerializer
+#
+#     @exception_handler
+#     def post(self, request, *args, **kwargs):
+#         email = request.data['email']
+#         user = User.objects.filter(email=email).first()
+#         if user:
+#             if user.is_active is False:
+#                 current_site = get_current_site(self.request)
+#                 generate_and_send_otp(email, current_site)
+#                 return Response({'success': True, 'status': 200, 'message': 'Email sent successfully.'})
+#
+#             else:
+#                 return Response({'success': True, 'status': 400, 'message': 'Your account is already activate'})
+#
+#         else:
+#             return Response({'success': True, 'status': 400, 'message': 'Email not found.please register first'})
+#
+#
 
-        user = User.objects.get(email__iexact=user)
-        return user
-
-    @exception_handler
-    def get(self, request, *args, **kwargs):
-        user = jwt_manager.get_user_from_auth_header(self.request)
-        if user:
-            try:
-                user = User.objects.get(email__iexact=user)
-                user = MeSerializer(user).data
-                return Response(user)
-
-            except:
-                return Response({'success': False, 'status': 401, 'error': 'You have no profile'})
-
-
-class RefreshTokenAPIView(generics.CreateAPIView):
-    serializer_class = RefreshTokenSerializer
-
-    @exception_handler
-    def create(self, request, *args, **kwargs):
-        refresh_token = request.data.get('refresh_token')
-
-        if not refresh_token:
-            return Response({'success': False, 'status': 400, 'error': 'Refresh token is required'})
-
-        email = jwt_manager.auth_refresh_wrapper(refresh_token)
-        if email:
-            login_token = jwt_manager.encode_login_token(email)
-            return Response({'success': True, 'status': 200, 'message': login_token})
-        else:
-            return Response({'success': False, 'status': 401, 'error': 'You are not authorized'})
-
-
-class ActiveAccountAPIView(views.APIView):
-
-    @exception_handler
-    def get(self, request, otp_code):
-
-        r = redis.Redis(host='localhost', port=6379, db=0)
-        keys = r.keys('*')
-
-        for key in keys:
-
-            value = r.get(key)
-
-            if value.decode('utf-8') == otp_code:
-                user = User.objects.filter(email=key.decode('utf-8')).first()
-                user.is_active = True
-                user.save()
-                r.delete(key)
-
-                return Response({'success': True, 'status': 200, 'message': 'Account activated successfully'})
-
-        return Response({'success': False, 'status': 404, 'error': 'Invalid OTP code'})
-
-
-class VerifyEmailAPIView(generics.CreateAPIView):
-    serializer_class = VerifyEmailSerializer
-
-    @exception_handler
-    def post(self, request, *args, **kwargs):
-        email = request.data['email']
-        user = User.objects.filter(email=email).first()
-        if user:
-            if user.is_active is False:
-                current_site = get_current_site(self.request)
-                generate_and_send_otp(email, current_site)
-                return Response({'success': True, 'status': 200, 'message': 'Email sent successfully.'})
-
-            else:
-                return Response({'success': True, 'status': 400, 'message': 'Your account is already activate'})
-
-        else:
-            return Response({'success': True, 'status': 400, 'message': 'Email not found.please register first'})
-
-
-class LogAPIView(generics.ListAPIView):
-    queryset = LogUserModel.objects.all()
-    serializer_class = LogSerializer
