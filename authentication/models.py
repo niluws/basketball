@@ -65,7 +65,15 @@ class LogUserModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.CharField(max_length=150, verbose_name='رویداد')
 
+    class Meta:
+        verbose_name_plural = "لاگ ها"
+        verbose_name = "لاگ"
+
 
 class LogExceptionModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=450, verbose_name='ارور')
+
+    class Meta:
+        verbose_name_plural = "ارور ها"
+        verbose_name = "ارور"

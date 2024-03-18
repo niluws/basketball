@@ -148,6 +148,7 @@ class CommitteeModel(models.Model):
 
     class Meta:
         verbose_name_plural = "اعضای کمیته"
+        verbose_name = 'اعضای کمیته'
 
 
 class AboutModel(models.Model):
@@ -163,7 +164,7 @@ class AboutModel(models.Model):
 
 # todo it should be in settings
 class AboutImagesModel(models.Model):
-    about = models.ForeignKey(AboutModel, on_delete=models.CASCADE,related_name='image', verbose_name="درباره ی ما")
+    about = models.ForeignKey(AboutModel, on_delete=models.CASCADE, related_name='image', verbose_name="درباره ی ما")
     image = models.ImageField(upload_to='about/', null=True, blank=True, verbose_name="عکس")
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
