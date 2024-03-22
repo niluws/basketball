@@ -1,10 +1,10 @@
 from rest_framework import generics
 from rest_framework.response import Response
 
-from .models import NewsModel, ClassModel, ImageCategoryModel, StaffModel, BlogModel, LeagueTableModel, LeagueModel, \
+from .models import NewsModel, ClassModel, ImageCategoryModel, StaffModel, BlogModel, LeagueModel, \
     AboutModel, BossModel, CommitteeModel, ClassDetailModel
 from .serializers import NewsModelSerializer, ClassModelSerializer, ImageCategoryModelSerializer, StaffModelSerializer, \
-    BlogModelSerializer, AboutModelSerializer, LeagueModelSerializer, LeagueTableSerializer, BossModelSerializer, \
+    BlogModelSerializer, AboutModelSerializer, LeagueModelSerializer, BossModelSerializer, \
     CommitteeModelSerializer, ClassDetailModelSerializer
 
 
@@ -66,8 +66,3 @@ class AboutModelListAPI(generics.ListAPIView):
 class LeagueModelListAPI(generics.ListAPIView):
     queryset = LeagueModel.objects.all()
     serializer_class = LeagueModelSerializer
-
-
-class LeagueTableListAPI(generics.ListAPIView):
-    queryset = LeagueTableModel.objects.all()
-    serializer_class = LeagueTableSerializer

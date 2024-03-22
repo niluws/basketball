@@ -132,6 +132,7 @@ class AboutModelAdmin(admin.ModelAdmin):
 
 class LeagueTableModelInline(admin.TabularInline):
     model = LeagueTableModel
+    extra = 0
 
 
 @admin.register(LeagueModel)

@@ -178,7 +178,7 @@ class AboutImagesModel(models.Model):
 
 
 class LeagueModel(models.Model):
-    league_name = models.CharField(max_length=225, null=True, blank=True, verbose_name="نام لیگ")
+    league_name = models.CharField(max_length=225, verbose_name="نام لیگ")
 
     # available = models.BooleanField(null=True, blank=True, verbose_name="")
     def __str__(self):
@@ -194,16 +194,16 @@ class LeagueTableModel(models.Model):
         ("M", "اقایان"),
         ("F", "بانوان"),
     )
-    league = models.ForeignKey(LeagueModel, on_delete=models.CASCADE, null=True, blank=True, verbose_name="لیگ")
-    team_name = models.CharField(max_length=225, null=True, blank=True, verbose_name="نام تیم")
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True, verbose_name="جنسیت")
-    games = models.IntegerField(null=True, blank=True, verbose_name="بازی ها")
-    wins = models.IntegerField(null=True, blank=True, verbose_name="برد")
-    fails = models.IntegerField(null=True, blank=True, verbose_name="باخت")
-    draws = models.IntegerField(null=True, blank=True, verbose_name="مساوی")
-    goals = models.IntegerField(null=True, blank=True, verbose_name="گل ها")
-    differences = models.IntegerField(null=True, blank=True, verbose_name="تفاضل")
-    scores = models.IntegerField(null=True, blank=True, verbose_name="امیتاز ها")
+    league = models.ForeignKey(LeagueModel, on_delete=models.CASCADE, verbose_name="league")
+    team_name = models.CharField(max_length=100, verbose_name="نام تیم")
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="جنسیت")
+    games = models.IntegerField(verbose_name="بازی ها")
+    wins = models.IntegerField(verbose_name="برد")
+    fails = models.IntegerField(verbose_name="باخت")
+    draws = models.IntegerField(verbose_name="مساوی")
+    goals = models.IntegerField(verbose_name="گل ها")
+    differences = models.IntegerField(verbose_name="تفاضل")
+    scores = models.IntegerField(verbose_name="امیتاز ها")
 
     def __str__(self):
         return self.team_name

@@ -14,5 +14,4 @@ urlpatterns = [
     path('committee/', views.CommitteeModelListAPI.as_view(), name="committee"),
     path('about/', views.AboutModelListAPI.as_view(), name="about"),
     path('league/', views.LeagueModelListAPI.as_view(), name="league"),
-    path('league_table/', views.LeagueTableListAPI.as_view(), name="league_table"),
 ]

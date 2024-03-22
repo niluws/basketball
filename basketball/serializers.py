@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import NewsModel, ClassModel, ImagesModel, StaffModel, BlogModel, AboutModel, LeagueModel, BossModel, \
-    CommitteeModel, ClassDetailModel, ImageCategoryModel, AboutImagesModel
+    CommitteeModel, ClassDetailModel, ImageCategoryModel, AboutImagesModel, LeagueTableModel
 
 
 class NewsModelSerializer(serializers.ModelSerializer):
@@ -76,13 +76,15 @@ class AboutModelSerializer(serializers.ModelSerializer):
         fields = ['description', 'image']
 
 
-class LeagueModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LeagueModel
-        fields = '__all__'
-
-
 class LeagueTableSerializer(serializers.ModelSerializer):
     class Meta:
+        model = LeagueTableModel
+        fields = ['id', 'team_name', 'gender', 'games', 'wins', 'fails', 'draws', 'goals', 'differences', 'scores']
+
+
+class LeagueModelSerializer(serializers.ModelSerializer):
+    leaguetablemodel_set = LeagueTableSerializer(many=True)
+
+    class Meta:
         model = LeagueModel
-        fields = '__all__'
+        fields = ['id', 'league_name', 'leaguetablemodel_set']
