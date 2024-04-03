@@ -6,9 +6,12 @@ from django.core.mail import EmailMessage
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from utils import config, handler
 from .models import User
-from .serializers import RegisterSerializer, LoginSerializer,LogoutSerializer
+from .serializers import MyTokenObtainPairSerializer
+from .serializers import RegisterSerializer, LoginSerializer, LogoutSerializer
 
 exception_handler = handler.exception_handler
 log_user_activity = handler.log_user_activity
@@ -88,6 +91,7 @@ class LoginAPIView(generics.CreateAPIView):
                     return Response({'success': False, 'status': 401, 'error': 'Incorrect password'})
                 user = authenticate(phone_number=phone_number, password=password)
                 refresh = RefreshToken.for_user(user)
+                # generate_and_send_otp(phone_number)
                 message = {
                     'message': 'You logged in successfully',
                     'data': {
@@ -108,6 +112,7 @@ class LoginAPIView(generics.CreateAPIView):
 
 class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
+
     @exception_handler
     def post(self, request):
         if request.user.is_authenticated:
@@ -123,6 +128,17 @@ class LogoutAPIView(generics.GenericAPIView):
             return Response({'success': False, 'status': 401, 'error': 'User is not authenticated'})
 
 
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            return Response({'success': False, 'error': 'Token is invalid or expired'}, status=400)
+
+        return Response(serializer.validated_data, status=200)
 
 # class ActiveAccountAPIView(views.APIView):
 #
@@ -145,26 +161,4 @@ class LogoutAPIView(generics.GenericAPIView):
 #                 return Response({'success': True, 'status': 200, 'message': 'Account activated successfully'})
 #
 #         return Response({'success': False, 'status': 404, 'error': 'Invalid OTP code'})
-#
-#
-# class VerifyEmailAPIView(generics.CreateAPIView):
-#     serializer_class = VerifyEmailSerializer
-#
-#     @exception_handler
-#     def post(self, request, *args, **kwargs):
-#         email = request.data['email']
-#         user = User.objects.filter(email=email).first()
-#         if user:
-#             if user.is_active is False:
-#                 current_site = get_current_site(self.request)
-#                 generate_and_send_otp(email, current_site)
-#                 return Response({'success': True, 'status': 200, 'message': 'Email sent successfully.'})
-#
-#             else:
-#                 return Response({'success': True, 'status': 400, 'message': 'Your account is already activate'})
-#
-#         else:
-#             return Response({'success': True, 'status': 400, 'message': 'Email not found.please register first'})
-#
-#
 
