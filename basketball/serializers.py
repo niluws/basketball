@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from .models import NewsModel, ClassModel, ImagesModel, StaffModel, BlogModel, AboutModel, LeagueModel, BossModel, \
-    CommitteeModel, ClassDetailModel, ImageCategoryModel, AboutImagesModel, LeagueTableModel
+    CommitteeModel, ClassDetailModel, ImageCategoryModel, LeagueTableModel, LeagueGroupModel, \
+    RollModel
 
 
 class NewsModelSerializer(serializers.ModelSerializer):
@@ -24,6 +25,19 @@ class ClassModelSerializer(serializers.ModelSerializer):
         fields = ['class_name', 'class_type']
 
 
+class RecentClassSerializer(serializers.ModelSerializer):
+    class_types = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ClassModel
+        fields = ['class_name', 'class_types']
+
+    def get_class_types(self, obj):
+        recent_class_types = obj.class_type.all().order_by('-created_at')[:1]
+        serializer = ClassDetailModelSerializer(recent_class_types, many=True)
+        return serializer.data
+
+
 class BlogModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogModel
@@ -36,12 +50,17 @@ class ImageModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ImageCategoryModelSerializer(serializers.ModelSerializer):
-    image = ImageModelSerializer(many=True, read_only=True)
+class RecentImageCategoryModelSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = ImageCategoryModel
         fields = ['id', 'category_title', 'image']
+
+    def get_image(self, obj):
+        images = obj.image.all()[:2]
+        serializer = ImageModelSerializer(images, many=True)
+        return serializer.data
 
 
 class StaffModelSerializer(serializers.ModelSerializer):
@@ -59,21 +78,29 @@ class BossModelSerializer(serializers.ModelSerializer):
 class CommitteeModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommitteeModel
-        fields = '__all__'
+        fields = ['id', 'image', 'full_name', 'gender']
 
 
-class AboutImageModelSerializer(serializers.ModelSerializer):
+class RollModelSerializer(serializers.ModelSerializer):
+    roll = CommitteeModelSerializer(many=True)
+
     class Meta:
-        model = AboutImagesModel
-        fields = '__all__'
+        model = RollModel
+        fields = ['id', 'title', 'roll']
+
+
+# class AboutImageModelSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = AboutImagesModel
+#         fields = '__all__'
 
 
 class AboutModelSerializer(serializers.ModelSerializer):
-    image = AboutImageModelSerializer(many=True, read_only=True)
+    # image = AboutImageModelSerializer(many=True, read_only=True)
 
     class Meta:
         model = AboutModel
-        fields = ['description', 'image']
+        fields = ['description']
 
 
 class LeagueTableSerializer(serializers.ModelSerializer):
@@ -82,9 +109,17 @@ class LeagueTableSerializer(serializers.ModelSerializer):
         fields = ['id', 'team_name', 'gender', 'games', 'wins', 'fails', 'draws', 'goals', 'differences', 'scores']
 
 
+class LeagueGroupSerializer(serializers.ModelSerializer):
+    # leaguetablemodel_set = LeagueTableSerializer(many=True)
+
+    class Meta:
+        model = LeagueGroupModel
+        fields = ['id', 'group_name']
+
+
 class LeagueModelSerializer(serializers.ModelSerializer):
-    leaguetablemodel_set = LeagueTableSerializer(many=True)
+    leaguegroupmodel_set = LeagueTableSerializer(many=True)
 
     class Meta:
         model = LeagueModel
-        fields = ['id', 'league_name', 'leaguetablemodel_set']
+        fields = ['id', 'league_name', 'leaguegroupmodel_set']

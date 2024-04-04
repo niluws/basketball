@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_yasg',
     "debug_toolbar",
+    'django_ckeditor_5',
     # ========apps=========
     'authentication',
     'basketball',
@@ -60,3 +61,5 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL='authentication.User'
+
+

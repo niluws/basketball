@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.utils.html import format_html
 
 from .models import NewsModel, ClassModel, BlogModel, ImagesModel, StaffModel, AboutModel, LeagueModel, \
-    LeagueTableModel, ClassDetailModel, BossModel, CommitteeModel, AboutImagesModel, ImageCategoryModel
+    LeagueTableModel, ClassDetailModel, BossModel, CommitteeModel, ImageCategoryModel, \
+    LeagueGroupModel, RollModel
 
 
 @admin.register(NewsModel)
@@ -10,8 +11,10 @@ class NewsModelAdmin(admin.ModelAdmin):
     list_display = ('image', 'title', 'short_description', 'created_at', 'updated_at')
     ordering = ('-created_at',)
     sortable_by = ('created_at',)
+
     def short_description(self, obj):
         return ' '.join(obj.description.split()[:15]) + '...'
+
 
 class ClassDetailModelInline(admin.TabularInline):
     model = ClassDetailModel
@@ -22,21 +25,23 @@ class ClassDetailModelInline(admin.TabularInline):
 class ClassModelAdmin(admin.ModelAdmin):
     inlines = (ClassDetailModelInline,)
     list_display = ('class_name',)
+    readonly_fields = ('slug',)
 
 
 @admin.register(BlogModel)
 class BlogModelAdmin(admin.ModelAdmin):
     list_display = ('title', 'short_description')
+
     def short_description(self, obj):
         return ' '.join(obj.description.split()[:15]) + '...'
+
 
 class ImageModelInline(admin.TabularInline):
     model = ImagesModel
     extra = 0
-    fields = ('image_tag', 'image', 'short_description')
+    fields = ('image_tag', 'image', 'description',)
     readonly_fields = ('image_tag',)
-    def short_description(self, obj):
-        return ' '.join(obj.description.split()[:15]) + '...'
+
     def image_tag(self, obj):
         if obj.image:
             return format_html('<img src="{}" style="max-width:100px; max-height:100px"/>', obj.image.url)
@@ -48,9 +53,10 @@ class ImageModelInline(admin.TabularInline):
 class ImageCategoryModelAdmin(admin.ModelAdmin):
     inlines = (ImageModelInline,)
     list_display = ('category_title', 'display_images')
+    readonly_fields = ('slug',)
 
     def display_images(self, obj):
-        images = obj.image.all()  # Assuming 'imagesmodel_set' is the related name
+        images = obj.image.all()
         if images:
             return format_html(''.join(
                 '<img src="{}" style="max-width:100px; max-height:100px"/>'.format(img.image.url) for img in images))
@@ -78,12 +84,18 @@ class BossModelAdmin(admin.ModelAdmin):
         else:
             return "No image"
 
-    list_display = ('image_tag', 'full_name')
+    list_display = ('image_tag', 'full_name', 'city')
     search_fields = ('full_name',)
+
+
+@admin.register(RollModel)
+class RollModelAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(CommitteeModel)
 class CommitteeModelAdmin(admin.ModelAdmin):
+
     def image_tag(self, obj):
         if obj.image:
             return format_html(f'<img src="{obj.image.url}" style="max-width:100px; max-height:100px"/>')
@@ -95,34 +107,35 @@ class CommitteeModelAdmin(admin.ModelAdmin):
     search_fields = ('full_name',)
 
 
-class AboutImagesModelInline(admin.TabularInline):
-    model = AboutImagesModel
-    max_num = 3
-    fields = ('image_tag', 'image')
-    readonly_fields = ('image_tag',)
-
-    def image_tag(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" style="max-width:100px; max-height:100px"/>', obj.image.url)
-        else:
-            return "No image"
+# class AboutImagesModelInline(admin.TabularInline):
+#     model = AboutImagesModel
+#     max_num = 3
+#     fields = ('image_tag', 'image')
+#     readonly_fields = ('image_tag',)
+#
+#     def image_tag(self, obj):
+#         if obj.image:
+#             return format_html('<img src="{}" style="max-width:100px; max-height:100px"/>', obj.image.url)
+#         else:
+#             return "No image"
 
 
 @admin.register(AboutModel)
 class AboutModelAdmin(admin.ModelAdmin):
-    inlines = (AboutImagesModelInline,)
+    # inlines = (AboutImagesModelInline,)
     MAX_OBJECTS = 1
-    list_display = ('short_description', 'display_images')
+    list_display = ('short_description',)
 
     def short_description(self, obj):
         return ' '.join(obj.description.split()[:15]) + '...'
-    def display_images(self, obj):
-        images = obj.image.all()
-        if images:
-            return format_html(''.join(
-                '<img src="{}" style="max-width:100px; max-height:100px"/>'.format(img.image.url) for img in images))
-        else:
-            return "No images"
+
+    # def display_images(self, obj):
+    #     images = obj.image.all()
+    #     if images:
+    #         return format_html(''.join(
+    #             '<img src="{}" style="max-width:100px; max-height:100px"/>'.format(img.image.url) for img in images))
+    #     else:
+    #         return "No images"
 
     def has_add_permission(self, request):
         if self.model.objects.count() >= self.MAX_OBJECTS:
@@ -135,7 +148,13 @@ class LeagueTableModelInline(admin.TabularInline):
     extra = 0
 
 
+class LeagueGroupModelInline(admin.TabularInline):
+    model = LeagueGroupModel
+    inlines = (LeagueTableModelInline,)
+    extra = 0
+
+
 @admin.register(LeagueModel)
 class LeagueModelAdmin(admin.ModelAdmin):
-    inlines = (LeagueTableModelInline,)
+    inlines = (LeagueGroupModelInline,)
     list_display = ('league_name',)
