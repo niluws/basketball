@@ -1,7 +1,6 @@
-from django_ckeditor_5.fields import CKEditor5Field
-
 from django.db import models
 from django.utils.text import slugify
+from django_ckeditor_5.fields import CKEditor5Field
 from unidecode import unidecode
 
 
@@ -21,7 +20,7 @@ class NewsModel(models.Model):
 
 
 class ClassModel(models.Model):
-    class_name = models.CharField(unique=True,max_length=100, null=True, blank=True, verbose_name="نام کلاس")
+    class_name = models.CharField(unique=True, max_length=100, null=True, blank=True, verbose_name="نام کلاس")
     slug = models.SlugField(unique=True, null=True, blank=True, allow_unicode=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -86,7 +85,7 @@ class BlogModel(models.Model):
 
 
 class ImageCategoryModel(models.Model):
-    category_title = models.CharField(unique=True,max_length=100, null=True, blank=True,
+    category_title = models.CharField(unique=True, max_length=100, null=True, blank=True,
                                       verbose_name="موضوع دسته بندی")
     slug = models.SlugField(unique=True, null=True, blank=True, allow_unicode=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -226,7 +225,8 @@ class LeagueModel(models.Model):
 
 class LeagueGroupModel(models.Model):
     league = models.ForeignKey(LeagueModel, on_delete=models.CASCADE, null=True, blank=True, verbose_name="نام لیگ")
-    group_name = models.CharField(max_length=1, null=True, blank=True)
+    group_name = models.CharField(max_length=1, null=True, blank=True, verbose_name="نام گروه")
+    is_playoff = models.BooleanField(default=False)
 
     def __str__(self):
         return self.group_name
@@ -251,7 +251,7 @@ class LeagueTableModel(models.Model):
     draws = models.IntegerField(verbose_name="مساوی", null=True, blank=True)
     goals = models.IntegerField(verbose_name="گل ها", null=True, blank=True)
     differences = models.IntegerField(verbose_name="تفاضل", null=True, blank=True)
-    scores = models.IntegerField(verbose_name="امیتاز ها", null=True, blank=True)
+    scores = models.IntegerField(verbose_name="امتیازها", null=True, blank=True)
 
     def __str__(self):
         return self.team_name

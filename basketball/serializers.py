@@ -110,15 +110,16 @@ class LeagueTableSerializer(serializers.ModelSerializer):
 
 
 class LeagueGroupSerializer(serializers.ModelSerializer):
-    # leaguetablemodel_set = LeagueTableSerializer(many=True)
+    leaguetablemodel_set = LeagueTableSerializer(many=True)
 
     class Meta:
         model = LeagueGroupModel
-        fields = ['id', 'group_name']
+        fields = ['id', 'group_name', 'league', 'is_playoff', 'leaguetablemodel_set']
 
 
 class LeagueModelSerializer(serializers.ModelSerializer):
-    leaguegroupmodel_set = LeagueTableSerializer(many=True)
+    leaguegroupmodel_set = LeagueGroupSerializer(many=True)
+
 
     class Meta:
         model = LeagueModel

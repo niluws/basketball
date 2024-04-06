@@ -143,18 +143,20 @@ class AboutModelAdmin(admin.ModelAdmin):
         return super().has_add_permission(request)
 
 
-class LeagueTableModelInline(admin.TabularInline):
+class LeagueTableModelInline(admin.StackedInline):
     model = LeagueTableModel
     extra = 0
 
 
-class LeagueGroupModelInline(admin.TabularInline):
-    model = LeagueGroupModel
-    inlines = (LeagueTableModelInline,)
-    extra = 0
+@admin.register(LeagueGroupModel)
+class LeagueGroupAdmin(admin.ModelAdmin):
+    inlines = [LeagueTableModelInline]
+    list_display = ('group_name', 'league', 'is_playoff')
+    list_editable = ('league', 'is_playoff')
+    search_fields = ['group_name', 'league__league_name']
 
 
 @admin.register(LeagueModel)
 class LeagueModelAdmin(admin.ModelAdmin):
-    inlines = (LeagueGroupModelInline,)
-    list_display = ('league_name',)
+    list_display = ('league_name', 'available')
+    search_fields = ('league_name',)

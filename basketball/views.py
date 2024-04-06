@@ -106,5 +106,10 @@ class AboutModelListAPI(generics.ListAPIView):
 
 
 class LeagueModelListAPI(generics.ListAPIView):
-    queryset = LeagueModel.objects.filter(available=True)
     serializer_class = LeagueModelSerializer
+
+    def get_queryset(self):
+        return LeagueModel.objects.filter(available=True).prefetch_related(
+            'leaguegroupmodel_set',
+            'leaguegroupmodel_set__leaguetablemodel_set',
+        )
