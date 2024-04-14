@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import NewsModel, ClassModel, ImagesModel, StaffModel, BlogModel, AboutModel, LeagueModel, BossModel, \
     CommitteeModel, ClassDetailModel, ImageCategoryModel, LeagueTableModel, LeagueGroupModel, \
-    RollModel
+    RoleModel
 
 
 class NewsModelSerializer(serializers.ModelSerializer):
@@ -81,12 +81,12 @@ class CommitteeModelSerializer(serializers.ModelSerializer):
         fields = ['id', 'image', 'full_name', 'gender']
 
 
-class RollModelSerializer(serializers.ModelSerializer):
-    roll = CommitteeModelSerializer(many=True)
+class RoleModelSerializer(serializers.ModelSerializer):
+    role = CommitteeModelSerializer(many=True)
 
     class Meta:
-        model = RollModel
-        fields = ['id', 'title', 'roll']
+        model = RoleModel
+        fields = ['id', 'title', 'role']
 
 
 # class AboutImageModelSerializer(serializers.ModelSerializer):

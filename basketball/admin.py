@@ -3,7 +3,7 @@ from django.utils.html import format_html
 
 from .models import NewsModel, ClassModel, BlogModel, ImagesModel, StaffModel, AboutModel, LeagueModel, \
     LeagueTableModel, ClassDetailModel, BossModel, CommitteeModel, ImageCategoryModel, \
-    LeagueGroupModel, RollModel
+    LeagueGroupModel, RoleModel
 
 
 @admin.register(NewsModel)
@@ -88,8 +88,8 @@ class BossModelAdmin(admin.ModelAdmin):
     search_fields = ('full_name',)
 
 
-@admin.register(RollModel)
-class RollModelAdmin(admin.ModelAdmin):
+@admin.register(RoleModel)
+class RoleModelAdmin(admin.ModelAdmin):
     pass
 
 

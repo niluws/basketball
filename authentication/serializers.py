@@ -21,7 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'phone_number', 'password', 'confirm_password', 'roll']
+        fields = ['first_name', 'last_name', 'phone_number', 'password', 'confirm_password', 'role']
 
     def validate(self, attrs):
         attrs.pop('confirm_password')

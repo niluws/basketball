@@ -124,7 +124,7 @@ class ImagesModel(models.Model):
 class StaffModel(models.Model):
     image = models.ImageField(upload_to='staff/', null=True, blank=True, verbose_name="عکس")
     full_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="نام و نام خانوادگی")
-    roll = models.CharField(max_length=100, null=True, blank=True, verbose_name="سمت")
+    role = models.CharField(max_length=100, null=True, blank=True, verbose_name="سمت")
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -151,7 +151,7 @@ class BossModel(models.Model):
         verbose_name = "رییس"
 
 
-class RollModel(models.Model):
+class RoleModel(models.Model):
     title = models.CharField(max_length=100, null=True, blank=True, verbose_name="سمت")
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -169,8 +169,8 @@ class CommitteeModel(models.Model):
         ("M", "اقا"),
         ("F", "خانم"),
     )
-    roll = models.ForeignKey(RollModel, on_delete=models.PROTECT, null=True, blank=True, verbose_name="سمت",
-                             related_name='roll')
+    role = models.ForeignKey(RoleModel, on_delete=models.PROTECT, null=True, blank=True, verbose_name="سمت",
+                             related_name='role')
     image = models.ImageField(upload_to='committee/', null=True, blank=True, verbose_name="عکس")
     full_name = models.CharField(max_length=100, null=True, blank=True, verbose_name="نام و نام خانوادگی")
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True, verbose_name="جنسیت")

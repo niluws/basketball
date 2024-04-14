@@ -62,7 +62,7 @@ class RegisterAPIView(generics.CreateAPIView):
                 'first_name': serializer.validated_data.get('first_name'),
                 'last_name': serializer.validated_data.get('last_name'),
                 'phone_number': phone_number,
-                'roll': serializer.validated_data.get('roll'),
+                'role': serializer.validated_data.get('role'),
             }
             log = {
                 'event': 'Registered',

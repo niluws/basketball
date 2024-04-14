@@ -3,11 +3,11 @@ from rest_framework import generics
 from rest_framework.response import Response
 
 from .models import NewsModel, ClassModel, ImageCategoryModel, StaffModel, BlogModel, LeagueModel, \
-    AboutModel, BossModel, ClassDetailModel, RollModel, CommitteeModel, ImagesModel
+    AboutModel, BossModel, ClassDetailModel, RoleModel, CommitteeModel, ImagesModel
 from .serializers import NewsModelSerializer, RecentImageCategoryModelSerializer, \
     StaffModelSerializer, \
     BlogModelSerializer, AboutModelSerializer, LeagueModelSerializer, BossModelSerializer, \
-    ClassDetailModelSerializer, RollModelSerializer, ImageModelSerializer, RecentClassSerializer
+    ClassDetailModelSerializer, RoleModelSerializer, ImageModelSerializer, RecentClassSerializer
 
 
 class NewsModelListAPI(generics.ListAPIView):
@@ -82,10 +82,10 @@ class CommitteeModelListAPI(generics.ListAPIView):
     """
     اعضای کمیته
     """
-    queryset = RollModel.objects.prefetch_related(
-        Prefetch('roll', queryset=CommitteeModel.objects.order_by('full_name'))
+    queryset = RoleModel.objects.prefetch_related(
+        Prefetch('role', queryset=CommitteeModel.objects.order_by('full_name'))
     )
-    serializer_class = RollModelSerializer
+    serializer_class = RoleModelSerializer
 
 
 class AboutModelListAPI(generics.ListAPIView):
