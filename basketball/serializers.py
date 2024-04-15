@@ -22,7 +22,7 @@ class ClassModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClassModel
-        fields = ['class_name', 'class_type']
+        fields = ['class_name', 'slug', 'class_type']
 
 
 class RecentClassSerializer(serializers.ModelSerializer):
@@ -30,7 +30,7 @@ class RecentClassSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClassModel
-        fields = ['class_name', 'class_types']
+        fields = ['class_name', 'slug', 'class_types']
 
     def get_class_types(self, obj):
         recent_class_types = obj.class_type.all().order_by('-created_at')[:1]
@@ -55,7 +55,7 @@ class RecentImageCategoryModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ImageCategoryModel
-        fields = ['id', 'category_title', 'image']
+        fields = ['id', 'category_title', 'slug', 'image']
 
     def get_image(self, obj):
         images = obj.image.all()[:2]
@@ -119,7 +119,6 @@ class LeagueGroupSerializer(serializers.ModelSerializer):
 
 class LeagueModelSerializer(serializers.ModelSerializer):
     leaguegroupmodel_set = LeagueGroupSerializer(many=True)
-
 
     class Meta:
         model = LeagueModel
