@@ -27,6 +27,7 @@ urlpatterns = [
     path("auth/", include('authentication.urls', namespace='auth')),
     path("profile/", include('account.urls', namespace='profile')),
     path("basketball/", include('basketball.urls', namespace='basketball')),
+    path("settings/", include('setting.urls', namespace='settings')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

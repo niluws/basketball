@@ -19,6 +19,8 @@ INSTALLED_APPS = [
     # ========apps=========
     'authentication',
     'basketball',
+    'account',
+    'setting',
 ]
 
 MIDDLEWARE = [
@@ -54,12 +56,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-AUTH_USER_MODEL='authentication.User'
-
-
+AUTH_USER_MODEL = 'authentication.User'
