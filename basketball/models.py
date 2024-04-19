@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.text import slugify
-from django_ckeditor_5.fields import CKEditor5Field
 from unidecode import unidecode
 
 
@@ -21,15 +20,8 @@ class NewsModel(models.Model):
 
 class ClassModel(models.Model):
     class_name = models.CharField(unique=True, max_length=100, null=True, blank=True, verbose_name="نام کلاس")
-    slug = models.SlugField(unique=True, null=True, blank=True, allow_unicode=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            slug = slugify(unidecode(self.class_name))
-            self.slug = slug
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.class_name
@@ -51,6 +43,8 @@ class ClassDetailModel(models.Model):
     show = models.BooleanField(verbose_name="در خانه نمایش داده شود", null=True, blank=True)
     class_type = models.ForeignKey(ClassModel, on_delete=models.CASCADE, related_name="class_type", null=True,
                                    blank=True)
+    slug = models.SlugField(unique=True, null=True, blank=True, allow_unicode=True)
+
     title = models.CharField(max_length=100, null=True, blank=True, verbose_name="شاخه ی دوره")
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, null=True, blank=True, verbose_name="وضعیت")
     deadline = models.DateField(null=True, blank=True, verbose_name="مهلت")
@@ -63,6 +57,12 @@ class ClassDetailModel(models.Model):
     start_date = models.DateField(null=True, blank=True, verbose_name="شروع کلاس")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            slug = slugify(unidecode(self.title))
+            self.slug = slug
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -186,7 +186,7 @@ class CommitteeModel(models.Model):
 
 
 class AboutModel(models.Model):
-    description = CKEditor5Field('Text', config_name='extends')
+    description = models.TextField()
 
     def __str__(self):
         return 'درباره ی ما'

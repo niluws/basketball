@@ -8,34 +8,37 @@ from .models import NewsModel, ClassModel, ImagesModel, StaffModel, BlogModel, A
 class NewsModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsModel
-        fields = '__all__'
+        fields = ['id', 'image', 'description']
 
 
+class BannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsModel
+        fields = ['id', 'image', 'description']
+
+
+# for detail page
 class ClassDetailModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClassDetailModel
-        fields = '__all__'
+        fields = ['id', 'title', 'slug', 'status', 'deadline', 'capacity', 'city', 'location', 'gender',
+                  'description', 'class_time', 'start_date']
 
 
-class ClassModelSerializer(serializers.ModelSerializer):
-    class_type = ClassDetailModelSerializer(many=True, read_only=True)
+# for main Card
+class ClassMainCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClassDetailModel
+        fields = ['id', 'title', 'slug', 'status', 'deadline', 'capacity', 'gender']
+
+
+# for all classes page
+class ClassSerializer(serializers.ModelSerializer):
+    class_type = ClassMainCardSerializer(many=True)
 
     class Meta:
         model = ClassModel
-        fields = ['class_name', 'slug', 'class_type']
-
-
-class RecentClassSerializer(serializers.ModelSerializer):
-    class_types = serializers.SerializerMethodField()
-
-    class Meta:
-        model = ClassModel
-        fields = ['class_name', 'slug', 'class_types']
-
-    def get_class_types(self, obj):
-        recent_class_types = obj.class_type.all().order_by('-created_at')[:1]
-        serializer = ClassDetailModelSerializer(recent_class_types, many=True)
-        return serializer.data
+        fields = ['class_name', 'class_type']
 
 
 class BlogModelSerializer(serializers.ModelSerializer):
@@ -44,12 +47,25 @@ class BlogModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# for gallery all images
 class ImageModelSerializer(serializers.ModelSerializer):
+    image_category = serializers.StringRelatedField()
+
     class Meta:
         model = ImagesModel
-        fields = '__all__'
+        fields = ['image_category', 'image', 'description']
 
 
+# for gallery all images
+class ImageCategoryModelSerializer(serializers.ModelSerializer):
+    image = ImageModelSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ImageCategoryModel
+        fields = ['category_title', 'image']
+
+
+# main mage of gallery to show recent image per each category
 class RecentImageCategoryModelSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
 
@@ -58,7 +74,7 @@ class RecentImageCategoryModelSerializer(serializers.ModelSerializer):
         fields = ['id', 'category_title', 'slug', 'image']
 
     def get_image(self, obj):
-        images = obj.image.all()[:2]
+        images = obj.image.all()[:4]
         serializer = ImageModelSerializer(images, many=True)
         return serializer.data
 

@@ -8,24 +8,30 @@ from .models import NewsModel, ClassModel, BlogModel, ImagesModel, StaffModel, A
 
 @admin.register(NewsModel)
 class NewsModelAdmin(admin.ModelAdmin):
-    list_display = ('image', 'title', 'short_description', 'created_at', 'updated_at')
+    list_display = ('image_tag', 'title', 'short_description', 'created_at', 'updated_at')
     ordering = ('-created_at',)
     sortable_by = ('created_at',)
 
     def short_description(self, obj):
         return ' '.join(obj.description.split()[:15]) + '...'
 
+    def image_tag(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-width:100px; max-height:100px"/>', obj.image.url)
+        else:
+            return "No image"
+
 
 class ClassDetailModelInline(admin.TabularInline):
     model = ClassDetailModel
     extra = 0
+    readonly_fields = ('slug',)
 
 
 @admin.register(ClassModel)
 class ClassModelAdmin(admin.ModelAdmin):
     inlines = (ClassDetailModelInline,)
     list_display = ('class_name',)
-    readonly_fields = ('slug',)
 
 
 @admin.register(BlogModel)

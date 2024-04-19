@@ -3,34 +3,54 @@ from rest_framework import generics
 from rest_framework.response import Response
 
 from .models import NewsModel, ClassModel, ImageCategoryModel, StaffModel, BlogModel, LeagueModel, \
-    AboutModel, BossModel, ClassDetailModel, RoleModel, CommitteeModel, ImagesModel
+    AboutModel, BossModel, ClassDetailModel, RoleModel, CommitteeModel
 from .serializers import NewsModelSerializer, RecentImageCategoryModelSerializer, \
     StaffModelSerializer, \
     BlogModelSerializer, AboutModelSerializer, LeagueModelSerializer, BossModelSerializer, \
-    ClassDetailModelSerializer, RoleModelSerializer, ImageModelSerializer, RecentClassSerializer
+    ClassDetailModelSerializer, RoleModelSerializer, ImageCategoryModelSerializer, ClassSerializer, BannerSerializer
 
 
-class NewsModelListAPI(generics.ListAPIView):
+class NewsListAPI(generics.ListAPIView):
     queryset = NewsModel.objects.all()
     serializer_class = NewsModelSerializer
 
 
+class NewsDetailListAPI(generics.RetrieveAPIView):
+    queryset = NewsModel.objects.all()
+    serializer_class = NewsModelSerializer
+    lookup_field = 'id'
+
+
+class BannerAPI(generics.ListAPIView):
+    queryset = NewsModel.objects.all()[:3]
+    serializer_class = BannerSerializer
+
+
 class HomeClassListAPI(generics.ListAPIView):
+    """
+    این کلاس ها در صفحه ای که تمام دورها را نمایش میدهد استفاده میشود
+    """
     queryset = ClassDetailModel.objects.filter(show=True)
     serializer_class = ClassDetailModelSerializer
 
 
-class RecentClassListAPI(generics.ListAPIView):
+class ClassListAPI(generics.ListAPIView):
+    """
+    این کلاس ها در صفحه ای که تمام دوره ها را نمایش میدهد استفاده میشود
+    """
     queryset = ClassModel.objects.all()
-    serializer_class = RecentClassSerializer
+    serializer_class = ClassSerializer
 
 
-class ClassByTypeAPIView(generics.ListAPIView):
+class ClassDetailAPIView(generics.ListAPIView):
+    """
+     جزیئات کلاس
+    """
     serializer_class = ClassDetailModelSerializer
 
     def get_queryset(self):
         slug = self.kwargs.get('slug')
-        queryset = ClassDetailModel.objects.filter(class_type__slug__exact=slug)
+        queryset = ClassDetailModel.objects.filter(slug=slug)
         return queryset
 
 
@@ -40,21 +60,26 @@ class BlogModelListAPI(generics.ListAPIView):
 
 
 class RecentImageListAPIView(generics.ListAPIView):
+    """
+    دسته بندی ها و 4 عکس اخیر از هر دسته بندی را نمایش میدهد
+    """
     queryset = ImageCategoryModel.objects.prefetch_related('image')
     serializer_class = RecentImageCategoryModelSerializer
 
 
 class ImageByCategoryAPIView(generics.ListAPIView):
-    serializer_class = ImageModelSerializer
+    """
+    تمام عکسای مربوط به یک دسته بندی را نمایش میدهد
+    """
+    serializer_class = ImageCategoryModelSerializer
 
     def get_queryset(self):
         slug = self.kwargs.get('slug')
         try:
             category = ImageCategoryModel.objects.get(slug=slug)
-            images = category.image.all()
-            return images
+            return [category]
         except ImageCategoryModel.DoesNotExist:
-            return ImagesModel.objects.none()
+            return ImageCategoryModel.objects.none()
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -89,9 +114,6 @@ class CommitteeModelListAPI(generics.ListAPIView):
 
 
 class AboutModelListAPI(generics.ListAPIView):
-    """
-        در این بخش از ckeditor استفاده شده است
-    """
     queryset = AboutModel.objects.all()
     serializer_class = AboutModelSerializer
 
